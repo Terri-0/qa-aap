@@ -3,12 +3,43 @@ import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
+import QuestionInput from './QuestionInput'
+import QuestionDisplay from './QuestionDisplay'
+
+export type Question = {
+    id: string;
+    question: string;
+    upvotes: number;
+    createdAt: number;
+  }
 
 function App() {
-  const [count, setCount] = useState(0)
 
-  return (
+  
+
+  const [questions, setQuestions] = useState<Question[]>([])
+  
+  function addQuestion(text: string) {
+    const question: Question = {
+      id: crypto.randomUUID(),
+      question: text,
+      upvotes: 0,
+      createdAt: Date.now()
+    };
+    setQuestions((questions) => [...questions, question])
+  }
+
+  function upvoteQuestion(id: string){
+    setQuestions((questions) => questions.map((question) =>
+    question.id == id
+    ? {...question, upvotes: question.upvotes + 1 }
+    : question))
+  }
+  
+return (
     <>
+    <QuestionInput sendQuestionToParent={addQuestion}/>
+
       <section id="center">
         <div className="hero">
           <img src={heroImg} className="base" width="170" height="179" alt="" />
@@ -21,13 +52,7 @@ function App() {
             Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
+        <QuestionDisplay questions={questions} upvoteQuestion={upvoteQuestion}/>
       </section>
 
       <div className="ticks"></div>
@@ -118,5 +143,7 @@ function App() {
     </>
   )
 }
+
+
 
 export default App
